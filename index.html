@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>SIMIOS — Next Gen Panel | x25</title>
+  <title>SIMIOS — Next Gen Panel & Minigame | x25</title>
   <meta name="theme-color" content="#000000" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -70,7 +70,6 @@
         <div class="hero__actions">
           <a class="btn btn--primary" href="#"><span>INIT_ACCOUNT</span></a>
           <a class="btn btn--secondary" href="#"><span>DOWNLOAD_PATCH</span></a>
-          <a class="btn btn--ghost" href="#"><span>DISCORD_LINK</span></a>
         </div>
       </div>
 
@@ -79,7 +78,7 @@
           <div class="panel__head">
             <h2>LIVE_METRICS</h2>
             <button class="iconbtn" id="btnRefreshAll" title="Refresh Data">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3a5 5 0 0 0-5 5h2a3 3 0 1 1 3 3 3 3 0 0 1 3-3V6a5 5 0 0 0-5-3z"/><path d="M8 13a5 5 0 0 0 5-5h-2a3 3 0 1 1-3 3 3 3 0 0 1-3-3v2a5 5 0 0 0 5 3z"/></svg>
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3a5 5 0 0 0-5 5h2a3 3 1 1 3 3 3 3 0 0 1 3-3V6a5 5 0 0 0-5-3z"/><path d="M8 13a5 5 0 0 0 5-5h-2a3 3 1 1-3 3 3 3 0 0 1-3-3v2a5 5 0 0 0 5 3z"/></svg>
             </button>
           </div>
 
@@ -94,37 +93,54 @@
               <div class="stat__label">UPTIME</div>
               <div class="stat__value" id="statUptime">--</div>
             </div>
-
-            <div class="stat-box">
-              <div class="stat__label">SIEGE_STATUS</div>
-              <div class="stat__value small" id="statSiege">--</div>
-            </div>
-
-            <div class="stat-box">
-              <div class="stat__label">SYSTEM_RATES</div>
-              <div class="stat__value gold-text">x25</div>
-            </div>
           </div>
-        </div>
-
-        <div class="panel glass-panel mt-4">
-          <div class="panel__head">
-            <h2>NEWS_FEED</h2>
-          </div>
-          <ul class="list">
-            <li class="news-item">
-              <span class="badge badge--gold">INFO</span>
-              <span>Macro engine v3.0 enabled. Auto-farm ready.</span>
-            </li>
-            <li class="news-item">
-              <span class="badge badge--red">ALERT</span>
-              <span>Grand Opening Sequence: <strong>20/01/26</strong>.</span>
-            </li>
-          </ul>
         </div>
       </aside>
     </section>
 
+    <section class="section" id="minigameSection">
+       <div class="section__head">
+        <h2>CYBER RUNNER EVENT</h2>
+        <p class="muted mono">Dodge the firewall glitches to win a prize.</p>
+        <div class="decor-line"></div>
+      </div>
+      
+      <div class="game-wrapper glass-panel">
+        <canvas id="runnerCanvas"></canvas>
+        
+        <div id="gameUI" class="game-ui">
+          <div id="screenStart" class="game-screen is-active">
+            <h3 class="neon-blue">PROTOCOL: RUNNER_V1</h3>
+            <p>Jump over the red glitches. Reach 1000m distance.</p>
+            <p class="micro muted">[ CONTROLS: SPACEBAR or CLICK to JUMP ]</p>
+            <button class="btn btn--primary" id="btnGameStart">INITIALIZE RUN</button>
+          </div>
+
+          <div id="screenFail" class="game-screen">
+            <h3 class="neon-red">SYSTEM FAILURE</h3>
+            <p>Collision detected. Connection severed.</p>
+             <p class="mono">Distance traveled: <span id="finalScoreFail">0</span>m</p>
+            <button class="btn btn--secondary" id="btnGameRetry">REBOOT SEQUENCE</button>
+          </div>
+
+          <div id="screenWin" class="game-screen">
+            <h3 class="gold-text">OBJECTIVE COMPLETE!</h3>
+            <p>Data recovered successfully.</p>
+            <div class="prize-container">
+              <div class="tv-hologram">
+                <div class="tv-screen">32" HD</div>
+              </div>
+              <p class="gold-text">REWARD: 32" DISPLAY UNIT</p>
+            </div>
+            <button class="btn btn--primary" id="btnGameClaim">CLAIM REWARD</button>
+          </div>
+        </div>
+
+        <div class="game-hud mono">
+          DISTANCE: <span id="gameDistance">0</span>m / 1000m
+        </div>
+      </div>
+    </section>
     <section class="section">
       <div class="section__head">
         <h2>LEADERBOARDS</h2>
@@ -150,41 +166,11 @@
       </div>
     </section>
 
-    <section class="section">
-      <div class="section__head section__head--split">
-        <div>
-          <h2>BOSS_TRACKER</h2>
-          <p class="muted mono">Monitoring bio-signals...</p>
-        </div>
-
-        <div class="controls">
-          <div class="seg">
-            <button class="seg__btn is-active" data-filter="all">ALL</button>
-            <button class="seg__btn" data-filter="alive">ALIVE</button>
-            <button class="seg__btn" data-filter="dead">KIA</button>
-          </div>
-          <button class="btn btn--small" id="btnRefreshRaids">SYNC</button>
-        </div>
-      </div>
-
-      <div class="panel glass-panel">
-        <div class="table" role="table">
-          <div class="table__row table__row--head" role="row">
-            <div class="cell" role="columnheader">TARGET</div>
-            <div class="cell" role="columnheader">STATUS</div>
-            <div class="cell" role="columnheader">ZONE</div>
-            <div class="cell" role="columnheader">RESPAWN</div>
-          </div>
-          <div id="raidTableBody"></div>
-        </div>
-      </div>
-    </section>
-
     <footer class="footer">
       <div class="footer__inner">
         <div class="brand__sigil brand__sigil--small"></div>
         <div class="muted micro mono">
-          SYSTEM_ID: SIMIOS // UI_VER: 2026.1 <br>
+          SYSTEM_ID: SIMIOS // UI_VER: 2026.2 <br>
           ALL DATA SIMULATED FOR DEMONSTRATION.
         </div>
       </div>
