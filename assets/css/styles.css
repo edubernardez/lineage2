@@ -1,13 +1,14 @@
 :root {
   --bg-void: #020204;
   --bg-dark: #0a0b10;
-  --glass: rgba(20, 25, 40, 0.4);
+  --glass: rgba(20, 25, 40, 0.6); /* Un poco más oscuro para mejor contraste */
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-highlight: rgba(255, 255, 255, 0.15);
   
   --primary: #ffce63; /* Oro L2 */
   --primary-glow: rgba(255, 206, 99, 0.5);
   --accent: #00f0ff; /* Cyan Cyberpunk */
+  --accent-glow: rgba(0, 240, 255, 0.5);
   --danger: #ff2a2a;
   --success: #00ffa3;
   
@@ -59,9 +60,11 @@ body {
 
 /* --- Typography & Utils --- */
 .mono { font-family: monospace; letter-spacing: -0.5px; }
+.micro { font-size: 0.7rem; }
 .gold-text { color: var(--primary); text-shadow: 0 0 10px var(--primary-glow); }
 .neon-green { color: var(--success); text-shadow: 0 0 8px rgba(0,255,163,0.6); }
 .neon-blue { color: var(--accent); text-shadow: 0 0 8px rgba(0,240,255,0.6); }
+.neon-red { color: var(--danger); text-shadow: 0 0 8px rgba(255,42,42,0.6); }
 .muted { color: var(--text-muted); }
 .mt-4 { margin-top: 2rem; }
 
@@ -73,6 +76,10 @@ body {
 
 /* --- Components --- */
 .wrap { width: min(1200px, 92%); margin: 0 auto; }
+.section { margin: 4rem auto; }
+.section__head { margin-bottom: 1.5rem; }
+.section__head h2 { font-family: var(--font-display); margin: 0 0 0.5rem 0; letter-spacing: 2px; }
+.decor-line { height: 1px; background: linear-gradient(90deg, var(--primary), transparent); width: 100px; }
 
 /* Topbar */
 .topbar {
@@ -149,6 +156,7 @@ body {
   content:''; position: absolute; top:0; left:0; right:0; height: 1px;
   background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
   opacity: 0.5;
+  pointer-events: none;
 }
 
 .notice { margin-top: 2rem; padding: 1.5rem; display: flex; gap: 1rem; border-left: 2px solid var(--primary); }
@@ -167,6 +175,7 @@ body {
   transition: 0.3s var(--ease-out);
   overflow: hidden;
   display: flex; align-items: center; justify-content: center;
+  border: none; cursor: pointer; font-family: var(--font-ui);
 }
 
 .btn--primary {
@@ -204,7 +213,6 @@ body {
 .stat-box { background: rgba(20, 25, 40, 0.6); padding: 1.5rem; position: relative; }
 .stat__label { font-size: 0.7rem; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 5px; }
 .stat__value { font-size: 2rem; font-weight: 700; font-family: var(--font-display); line-height: 1; }
-.stat__value.small { font-size: 1rem; font-family: var(--font-ui); color: var(--text-main); }
 .stat__bar { height: 2px; width: 100%; background: #333; margin-top: 10px; }
 .stat__fill { height: 100%; background: var(--success); box-shadow: 0 0 10px var(--success); }
 
@@ -216,19 +224,9 @@ body {
   align-items: center; font-size: 0.9rem;
 }
 .table__row:hover { background: rgba(255,255,255,0.03); }
-.table__row--head { color: var(--text-muted); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; }
-
 .rank__pos { font-weight: 700; color: var(--primary); width: 30px; }
 .rank__name { font-weight: 600; }
 .rank__clan { font-size: 0.8rem; color: var(--text-muted); }
-
-/* Raids */
-.pillstate {
-  font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 2px;
-  text-transform: uppercase; letter-spacing: 1px;
-}
-.pillstate--alive { color: var(--success); border: 1px solid rgba(0,255,163,0.3); background: rgba(0,255,163,0.05); }
-.pillstate--dead { color: var(--danger); border: 1px solid rgba(255,42,42,0.3); background: rgba(255,42,42,0.05); }
 
 /* Footer */
 .footer { padding: 4rem 0 2rem; text-align: center; border-top: 1px solid var(--glass-border); margin-top: 4rem; }
@@ -238,15 +236,72 @@ body {
 /* Animations */
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 @keyframes pulseFog { 0% { opacity: 0.3; } 100% { opacity: 0.7; } }
-
-/* Controls */
-.seg { display: inline-flex; border: 1px solid var(--glass-border); }
-.seg__btn {
-  background: transparent; color: var(--text-muted); padding: 8px 16px; border: none; cursor: pointer;
-  font-family: var(--font-ui); font-weight: 600; letter-spacing: 1px; transition: 0.3s;
-}
-.seg__btn:hover { color: var(--text-main); }
-.seg__btn.is-active { background: rgba(255,255,255,0.1); color: var(--primary); }
+@keyframes hologramFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
 .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 @media(max-width: 800px) { .cols2 { grid-template-columns: 1fr; } }
+
+/* ================= ESTILOS DEL JUEGO ================= */
+.game-wrapper {
+  position: relative;
+  width: 100%;
+  height: 350px; /* Altura fija para el área de juego */
+  background: rgba(0, 5, 10, 0.8);
+  overflow: hidden;
+}
+
+#runnerCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* El canvas en sí es transparente, el fondo lo da el wrapper */
+}
+
+/* UI Superpuesta (Start, Game Over, Win) */
+.game-ui {
+  position: absolute; inset: 0;
+  display: flex; justify-content: center; align-items: center;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  z-index: 20;
+}
+
+.game-screen {
+  text-align: center; padding: 2.5rem;
+  background: var(--glass); border: 1px solid var(--glass-border);
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  max-width: 450px; width: 90%;
+  display: none; /* Oculto por defecto */
+  pointer-events: auto;
+  animation: slideUp 0.3s var(--ease-out);
+}
+@keyframes slideUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); }}
+
+.game-screen.is-active { display: block; }
+.game-screen h3 { margin-top: 0; letter-spacing: 2px; }
+
+/* HUD (Heads Up Display) durante el juego */
+.game-hud {
+  position: absolute; top: 15px; right: 20px;
+  font-size: 0.9rem; color: var(--accent); text-shadow: 0 0 5px var(--accent-glow);
+  background: rgba(0,0,0,0.3); padding: 4px 10px; border: 1px solid var(--glass-border);
+  pointer-events: none; /* Para que no interfiera con clicks */
+}
+
+/* Premio TV Holográfica */
+.prize-container { margin: 2rem 0; }
+.tv-hologram {
+  width: 120px; height: 80px; margin: 0 auto 1rem;
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 20px var(--primary-glow), inset 0 0 20px var(--primary-glow);
+  position: relative;
+  animation: hologramFloat 3s ease-in-out infinite;
+}
+.tv-hologram::after {
+  content: ''; position: absolute; bottom: -15px; left: 10%; width: 80%; height: 5px;
+  background: var(--primary); filter: blur(8px); opacity: 0.5;
+}
+.tv-screen {
+  height: 100%; display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 206, 99, 0.1); color: var(--primary); font-weight: 700;
+  font-family: var(--font-ui);
+}
