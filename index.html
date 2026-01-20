@@ -1,182 +1,92 @@
-<!doctype html>
-<html lang="es-UY">
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>SIMIOS — Next Gen Panel & Minigame | x25</title>
-  <meta name="theme-color" content="#000000" />
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="assets/css/styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscando al Master Thomas</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #222;
+            color: #ddd;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 { color: #f4d03f; }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            border: 2px solid #444;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #333;
+        }
+        .btn-camino {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-camino:hover {
+            background-color: #777;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            min-height: 50px;
+            padding: 10px;
+        }
+        .win { color: #2ecc71; border: 1px solid #2ecc71; }
+        .lose { color: #e74c3c; }
+    </style>
 </head>
-
 <body>
-  <div class="fx-noise"></div>
-  <div class="fx-scanlines"></div>
-  <div class="fx-fog"></div>
-  <canvas id="particleCanvas"></canvas>
 
-  <header class="topbar">
-    <div class="wrap topbar__inner">
-      <div class="brand">
-        <div class="brand__sigil glow-pulse"></div>
-        <div class="brand__text">
-          <div class="brand__name glitch-text" data-text="SIMIOS">SIMIOS</div>
-          <div class="brand__sub">H5 • x25 • SYSTEM</div>
-        </div>
-      </div>
-
-      <div class="status-chip" id="serverStatusChip">
-        <span class="dot" id="serverStatusDot"></span>
-        <div class="status-info">
-          <span class="status-label">MAINFRAME</span>
-          <strong class="status-value" id="serverStatusText">CONNECTING...</strong>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <section class="hero">
-      <div class="hero__left">
-        <div class="hero__title">
-          <h1>CHRONICLE <span class="gold-gradient">HIGH FIVE</span></h1>
-          <p class="hero__tagline">Rates <strong>x25</strong> // Drop <strong>x1</strong> // Spoil <strong>x1</strong></p>
-        </div>
-
-        <div class="hero__badges">
-          <div class="tech-pill">AUTO FARM: <span class="neon-green">ACTIVE</span></div>
-          <div class="tech-pill">PROTECTION: <span class="neon-blue">SIM-SHIELD</span></div>
-          <div class="tech-pill">CYCLE: <span class="neon-gold">WEEKLY</span></div>
-        </div>
-
-        <div class="notice glass-panel" data-tilt>
-          <div class="notice__decor"></div>
-          <div class="notice__content">
-            <div class="notice__headline">SYSTEM INITIALIZATION</div>
-            <div class="notice__body">
-              Protocolo de apertura confirmado: <strong class="gold-text">20/01/26</strong>.
-              CP Simios desplegada.
-              <div class="notice__gm">
-                ADMIN: <strong>Nevit</strong> <span class="muted">// Encrypted Channel</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="hero__actions">
-          <a class="btn btn--primary" href="#"><span>INIT_ACCOUNT</span></a>
-          <a class="btn btn--secondary" href="#"><span>DOWNLOAD_PATCH</span></a>
-        </div>
-      </div>
-
-      <aside class="hero__right">
-        <div class="panel panel--main glass-panel" data-tilt id="statsPanel">
-          <div class="panel__head">
-            <h2>LIVE_METRICS</h2>
-            <button class="iconbtn" id="btnRefreshAll" title="Refresh Data">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3a5 5 0 0 0-5 5h2a3 3 1 1 3 3 3 3 0 0 1 3-3V6a5 5 0 0 0-5-3z"/><path d="M8 13a5 5 0 0 0 5-5h-2a3 3 1 1-3 3 3 3 0 0 1-3-3v2a5 5 0 0 0 5 3z"/></svg>
-            </button>
-          </div>
-
-          <div class="grid2">
-            <div class="stat-box">
-              <div class="stat__label">USERS_ONLINE</div>
-              <div class="stat__value neon-text" id="statOnlineNow">0</div>
-              <div class="stat__bar"><div class="stat__fill" style="width: 70%"></div></div>
-            </div>
-
-            <div class="stat-box">
-              <div class="stat__label">UPTIME</div>
-              <div class="stat__value" id="statUptime">--</div>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </section>
-
-    <section class="section" id="minigameSection">
-       <div class="section__head">
-        <h2>CYBER RUNNER EVENT</h2>
-        <p class="muted mono">Dodge the firewall glitches to win a prize.</p>
-        <div class="decor-line"></div>
-      </div>
-      
-      <div class="game-wrapper glass-panel">
-        <canvas id="runnerCanvas"></canvas>
+    <div class="container">
+        <h1>🗡️ ¿DÓNDE ESTÁ MASTER THOMAS? 🗡️</h1>
+        <p>El enano se ha escondido. Tienes 3 caminos. Elige sabiamente.</p>
         
-        <div id="gameUI" class="game-ui">
-          <div id="screenStart" class="game-screen is-active">
-            <h3 class="neon-blue">PROTOCOL: RUNNER_V1</h3>
-            <p>Jump over the red glitches. Reach 1000m distance.</p>
-            <p class="micro muted">[ CONTROLS: SPACEBAR or CLICK to JUMP ]</p>
-            <button class="btn btn--primary" id="btnGameStart">INITIALIZE RUN</button>
-          </div>
-
-          <div id="screenFail" class="game-screen">
-            <h3 class="neon-red">SYSTEM FAILURE</h3>
-            <p>Collision detected. Connection severed.</p>
-             <p class="mono">Distance traveled: <span id="finalScoreFail">0</span>m</p>
-            <button class="btn btn--secondary" id="btnGameRetry">REBOOT SEQUENCE</button>
-          </div>
-
-          <div id="screenWin" class="game-screen">
-            <h3 class="gold-text">OBJECTIVE COMPLETE!</h3>
-            <p>Data recovered successfully.</p>
-            <div class="prize-container">
-              <div class="tv-hologram">
-                <div class="tv-screen">32" HD</div>
-              </div>
-              <p class="gold-text">REWARD: 32" DISPLAY UNIT</p>
-            </div>
-            <button class="btn btn--primary" id="btnGameClaim">CLAIM REWARD</button>
-          </div>
+        <div id="game-area">
+            <button class="btn-camino" onclick="buscar(1)">Camino 1: La Taberna del Olvido</button>
+            <button class="btn-camino" onclick="buscar(2)">Camino 2: El Bosque de los Hongos</button>
+            <button class="btn-camino" onclick="buscar(3)">Camino 3: La Cueva Húmeda</button>
         </div>
 
-        <div class="game-hud mono">
-          DISTANCE: <span id="gameDistance">0</span>m / 1000m
-        </div>
-      </div>
-    </section>
-    <section class="section">
-      <div class="section__head">
-        <h2>LEADERBOARDS</h2>
-        <div class="decor-line"></div>
-      </div>
+        <div id="resultado"></div>
+    </div>
 
-      <div class="cols2">
-        <div class="panel glass-panel">
-          <div class="panel__head">
-            <h3>TOP_PK_RATIO</h3>
-            <span class="muted micro mono">UPDATED: <span id="pkUpdatedAt">--</span></span>
-          </div>
-          <div id="topPK" class="rank-list"></div>
-        </div>
+    <script>
+        function buscar(eleccionUsuario) {
+            // Generar aleatoriamente dónde está Thomas (1, 2 o 3)
+            const ubicacionThomas = Math.floor(Math.random() * 3) + 1;
+            const resultadoDiv = document.getElementById('resultado');
 
-        <div class="panel glass-panel">
-          <div class="panel__head">
-            <h3>TOP_PVP_RATIO</h3>
-            <span class="muted micro mono">UPDATED: <span id="pvpUpdatedAt">--</span></span>
-          </div>
-          <div id="topPVP" class="rank-list"></div>
-        </div>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <div class="footer__inner">
-        <div class="brand__sigil brand__sigil--small"></div>
-        <div class="muted micro mono">
-          SYSTEM_ID: SIMIOS // UI_VER: 2026.2 <br>
-          ALL DATA SIMULATED FOR DEMONSTRATION.
-        </div>
-      </div>
-    </footer>
-  </main>
-
-  <script src="assets/js/app.js"></script>
+            if (eleccionUsuario === ubicacionThomas) {
+                // VICTORIA
+                resultadoDiv.innerHTML = `
+                    ¡LO ENCONTRASTE! 🎉<br><br>
+                    OBJETIVO CUMPLIDO:<br>
+                    "Terminar la Quest de mierda del enano verga este"
+                `;
+                resultadoDiv.className = 'win';
+            } else {
+                // DERROTA
+                resultadoDiv.innerHTML = `
+                    No está ahí... 💨<br>
+                    (Estaba en el Camino ${ubicacionThomas})<br>
+                    ¡Intenta de nuevo!
+                `;
+                resultadoDiv.className = 'lose';
+            }
+        }
+    </script>
 </body>
 </html>
